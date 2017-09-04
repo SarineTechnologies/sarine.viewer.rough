@@ -1,0 +1,19 @@
+{
+  "name": "sarine.viewer.rough",
+  "version": "0.4.0",
+  "main": "dist/sarine.viewer.rough.js",
+  "ignore": [
+    ".git",
+    "node_modules",
+    "package.json",
+    "Gruntfile.js"
+  ],
+  "dependencies": {
+    "sarine.viewer": "https://github.com/SarineTechnologies/sarine.viewer.git#v0.3.0"    
+  },
+  "exportsOverride": {
+        "sarine.*": {        
+          "coffee": "**/*.coffee"
+        }
+    }
+}
