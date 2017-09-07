@@ -1,6 +1,6 @@
 {
   "name": "sarine.viewer.rough",
-  "version": "0.4.0",
+  "version": "0.0.1",
   "main": "dist/sarine.viewer.rough.js",
   "ignore": [
     ".git",

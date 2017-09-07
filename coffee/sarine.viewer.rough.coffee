@@ -1,25 +1,34 @@
 ###!
-sarine.viewer.rough - v0.4.0 -  Monday, September 4th, 2017, 4:02:16 PM 
+sarine.viewer.rough - v0.0.1 -  Thursday, September 7th, 2017, 1:26:15 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 class SarineRoughDiamond extends Viewer
 	
-	pluginDimention = undefined
-
 	constructor: (options) -> 			
-		super(options)	
-		{@ImagesPath, @ImageName, @NumberOfImages, @ImageExtention, @ImagePrefix} = options	
+		super(options)
 		@isAvailble = true
-		@resourcesPrefix = options.baseUrl + "atomic/v1/assets/"	
+		@resourcesPrefix = options.baseUrl + "atomic/v1/assets/"
+		@atomConfig = configuration.experiences.filter((exp)-> exp.atom == "roughDiamond")[0] 	
 		@resources = [
 	      {element:'script',src:'threesixty.min.js'},
 	      {element:'link',src:'threesixty.css'}
-	    ]	
+	    ]
 
+		css = '.sarine-slider {width: ' + @atomConfig.ImageSize.width + 'px; height: ' + @atomConfig.ImageSize.height + 'px}'
+		head = document.head || document.getElementsByTagName('head')[0]
+		style = document.createElement('style')
+		style.type = 'text/css'
+		if (style.styleSheet)
+			style.styleSheet.cssText = css
+		else
+			style.appendChild(document.createTextNode(css))		
+		head.appendChild(style)
+
+		@pluginDimention = if @atomConfig.ImageSize && @atomConfig.ImageSize.height then @atomConfig.ImageSize.height else 300
+				
 	convertElement : () ->	
-		pluginDimention = if @element.parent().height() != 0 then @element.parent().height() else 300
-		margin = (pluginDimention / 2 - 15) #we reduce 15px cause the default loader height is 30px
-		@element.append '<div id="sarine-rough" class="threesixty ringImg"><div class="spinner" style="margin-top:' + margin + 'px;"><span>0%</span></div><ol class="threesixty_images"></ol></div></div>'	 	
+		margin = @pluginDimention / 2 + 15
+		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner" style="margin-top:' + margin + 'px;"><span>0%</span></div><ol class="threesixty_images"></ol></div></div>'	 	
 
 	preloadAssets: (callback)=>
 
@@ -51,7 +60,11 @@ class SarineRoughDiamond extends Viewer
 		defer = $.Deferred() 
 		_t = @
 		@preloadAssets ()->
-			src = configuration.configUrl + _t.ImagesPath + _t.ImageName + _t.ImageExtention
+			@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
+			#src = "#{configuration.rawdataBaseUrl}/#{_t.atomConfig.ImagesPath}/#{configuration.jewelryId}/slider/#{@firstImageName}#{cacheVersion}"
+
+			src = "http://localhost:3000/content/viewers/jewelry_test/slider/#{@firstImageName}#{cacheVersion}"
+			
 			_t.loadImage(src).then((img)->	
 				if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
 					defer.resolve(_t)
@@ -71,27 +84,31 @@ class SarineRoughDiamond extends Viewer
 
 	full_init : ()-> 
 		defer = $.Deferred()
-		if @isAvailble
-			$('.ringImg').ThreeSixty({
-				totalFrames: @NumberOfImages, # Total no. of image you have for 360 slider
-				endFrame: @NumberOfImages, # end frame for the auto spin animation
+		if @isAvailble 
+			@slider360 = @element.find('.slider360')
+			# @imagePath = "#{configuration.rawdataBaseUrl}/#{@atomConfig.ImagesPath}/#{configuration.jewelryId}/slider/"
+			@imagePath = "http://localhost:3000/content/viewers/jewelry_test/slider/"
+			@filePrefix = @atomConfig.ImagePattern.replace(/\*.[^/.]+$/,'')
+			@fileExt = ".#{@atomConfig.ImagePattern.split('.').pop()}"
+			@slider360.ThreeSixty({
+				totalFrames: @atomConfig.NumberOfImages, # Total no. of image you have for 360 slider
+				endFrame: @atomConfig.NumberOfImages, # end frame for the auto spin animation
 				currentFrame: 1, # This the start frame for auto spin
 				imgList: '.threesixty_images', # selector for image list
 				progress: '.spinner', # selector to show the loading progress
-				imagePath: configuration.configUrl + '/images/', # path of the image assets
-				filePrefix: @ImagePrefix, # file prefix if any
-				ext: @ImageExtention, # extention for the assets
-				height: pluginDimention,
-				width: pluginDimention,
+				imagePath: @imagePath, # path of the image assets
+				filePrefix: @filePrefix, # file prefix if any 
+				ext: @fileExt + cacheVersion, # extention for the assets
+				height: @pluginDimention, 
+				width: @pluginDimention,
 				navigation: false,
-				responsive: true
+				responsive: false,
+				onReady: () ->
+					defer.resolve(@)									
 			}); 
-					
-		defer.resolve(@)
-		defer
+		defer	
 		
 	play : () -> return		
 	stop : () -> return
 
 @SarineRoughDiamond = SarineRoughDiamond
-		
