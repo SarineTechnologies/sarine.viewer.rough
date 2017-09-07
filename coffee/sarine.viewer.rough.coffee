@@ -1,5 +1,5 @@
 ###!
-sarine.viewer.rough - v0.0.1 -  Thursday, September 7th, 2017, 1:26:15 PM 
+sarine.viewer.rough - v0.0.1 -  Thursday, September 7th, 2017, 6:25:08 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 class SarineRoughDiamond extends Viewer
@@ -15,6 +15,7 @@ class SarineRoughDiamond extends Viewer
 	    ]
 
 		css = '.sarine-slider {width: ' + @atomConfig.ImageSize.width + 'px; height: ' + @atomConfig.ImageSize.height + 'px}'
+		css += '.spinner {margin-top: 40% !important}'
 		head = document.head || document.getElementsByTagName('head')[0]
 		style = document.createElement('style')
 		style.type = 'text/css'
@@ -25,10 +26,12 @@ class SarineRoughDiamond extends Viewer
 		head.appendChild(style)
 
 		@pluginDimention = if @atomConfig.ImageSize && @atomConfig.ImageSize.height then @atomConfig.ImageSize.height else 300
-				
+
+		@domain = window.stones[0].viewersBaseUrl.replace('content/viewers/', '')
+		@path = @atomConfig.ImagesPath.replace("{stoneId}", window.stones[0].friendlyName)	
+
 	convertElement : () ->	
-		margin = @pluginDimention / 2 + 15
-		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner" style="margin-top:' + margin + 'px;"><span>0%</span></div><ol class="threesixty_images"></ol></div></div>'	 	
+		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"><span>0%</span></div><ol class="threesixty_images"></ol></div></div>'	 	
 
 	preloadAssets: (callback)=>
 
@@ -61,9 +64,7 @@ class SarineRoughDiamond extends Viewer
 		_t = @
 		@preloadAssets ()->
 			@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
-			#src = "#{configuration.rawdataBaseUrl}/#{_t.atomConfig.ImagesPath}/#{configuration.jewelryId}/slider/#{@firstImageName}#{cacheVersion}"
-
-			src = "http://localhost:3000/content/viewers/jewelry_test/slider/#{@firstImageName}#{cacheVersion}"
+			src = _t.domain + _t.path + "/" + @firstImageName + cacheVersion
 			
 			_t.loadImage(src).then((img)->	
 				if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
@@ -86,8 +87,9 @@ class SarineRoughDiamond extends Viewer
 		defer = $.Deferred()
 		if @isAvailble 
 			@slider360 = @element.find('.slider360')
-			# @imagePath = "#{configuration.rawdataBaseUrl}/#{@atomConfig.ImagesPath}/#{configuration.jewelryId}/slider/"
-			@imagePath = "http://localhost:3000/content/viewers/jewelry_test/slider/"
+			
+			@imagePath = @domain + @path + "/"
+			
 			@filePrefix = @atomConfig.ImagePattern.replace(/\*.[^/.]+$/,'')
 			@fileExt = ".#{@atomConfig.ImagePattern.split('.').pop()}"
 			@slider360.ThreeSixty({
