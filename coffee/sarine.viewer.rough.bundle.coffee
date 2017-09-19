@@ -1,5 +1,5 @@
 ###!
-sarine.viewer.rough - v0.0.1 -  Thursday, September 7th, 2017, 6:25:08 PM 
+sarine.viewer.rough - v0.0.1 -  Tuesday, September 19th, 2017, 2:12:38 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 
@@ -59,8 +59,8 @@ class SarineRoughDiamond extends Viewer
 
 		@pluginDimention = if @atomConfig.ImageSize && @atomConfig.ImageSize.height then @atomConfig.ImageSize.height else 300
 
-		@domain = window.stones[0].viewersBaseUrl.replace('content/viewers/', '')
-		@path = @atomConfig.ImagesPath.replace("{stoneId}", window.stones[0].friendlyName)	
+		@domain = window.coreDomain # window.stones[0].viewersBaseUrl.replace('content/viewers/', '')
+		@path = "demo/r2p/" + window.stones[0].friendlyName + "/interactive"	
 
 	convertElement : () ->	
 		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"><span>0%</span></div><ol class="threesixty_images"></ol></div></div>'	 	
@@ -96,8 +96,6 @@ class SarineRoughDiamond extends Viewer
 		_t = @
 		@preloadAssets ()->
 			@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
-			#src = "#{configuration.rawdataBaseUrl}/#{_t.atomConfig.ImagesPath}/#{configuration.jewelryId}/slider/#{@firstImageName}#{cacheVersion}"
-
 			src = _t.domain + _t.path + "/" + @firstImageName + cacheVersion
 			
 			_t.loadImage(src).then((img)->	
