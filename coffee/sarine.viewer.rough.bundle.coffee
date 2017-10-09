@@ -1,5 +1,5 @@
 ###!
-sarine.viewer.rough - v0.0.1 -  Tuesday, September 19th, 2017, 2:12:38 PM 
+sarine.viewer.rough - v0.0.1 -  Monday, October 9th, 2017, 1:54:20 PM 
  The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
 ###
 
@@ -63,7 +63,7 @@ class SarineRoughDiamond extends Viewer
 		@path = "demo/r2p/" + window.stones[0].friendlyName + "/interactive"	
 
 	convertElement : () ->	
-		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"><span>0%</span></div><ol class="threesixty_images"></ol></div></div>'	 	
+		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"></div><ol class="threesixty_images"></ol></div></div>'
 
 	preloadAssets: (callback)=>
 
