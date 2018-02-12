@@ -1,6 +1,6 @@
 {
   "name": "sarine.viewer.rough",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "viewer of rough diamond based on slider",
   "main": "index.js",
   "scripts": {
