@@ -42,7 +42,7 @@
   },
   "author": "",
   "engines": {
-    "node": "6.9.0"
+    "node": "0.4.5"
   },
   "homepage": "https://github.com/SarineTechnologies/sarine.viewer.rough"
 }
