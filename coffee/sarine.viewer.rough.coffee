@@ -23,8 +23,7 @@ class SarineRoughDiamond extends Viewer
 
 		@pluginDimention = if @atomConfig.ImageSize && @atomConfig.ImageSize.height then @atomConfig.ImageSize.height else 300
 
-		@domain = window.coreDomain # window.stones[0].viewersBaseUrl.replace('content/viewers/', '')
-		@path = "demo/r2p/" + window.stones[0].friendlyName + "/interactive"	
+		@domain = window.stones[0].viewers.roughViewer	
 
 	convertElement : () ->	
 		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"></div><ol class="threesixty_images"></ol></div></div>'
@@ -60,7 +59,7 @@ class SarineRoughDiamond extends Viewer
 		_t = @
 		@preloadAssets ()->
 			@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
-			src = _t.domain + _t.path + "/" + @firstImageName + cacheVersion
+			src = _t.domain + @firstImageName + cacheVersion
 			
 			_t.loadImage(src).then((img)->	
 				if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
@@ -84,7 +83,7 @@ class SarineRoughDiamond extends Viewer
 		if @isAvailble 
 			@slider360 = @element.find('.slider360')
 			
-			@imagePath = @domain + @path + "/"
+			@imagePath = @domain
 			
 			@filePrefix = @atomConfig.ImagePattern.replace(/\*.[^/.]+$/,'')
 			@fileExt = ".#{@atomConfig.ImagePattern.split('.').pop()}"
