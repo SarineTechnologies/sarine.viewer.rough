@@ -1,7 +1,3 @@
-###!
-sarine.viewer.rough - v0.0.1 -  Monday, November 13th, 2017, 2:49:29 PM 
- The source code, name, and look and feel of the software are Copyright © 2015 Sarine Technologies Ltd. All Rights Reserved. You may not duplicate, copy, reuse, sell or otherwise exploit any portion of the code, content or visual design elements without express written permission from Sarine Technologies Ltd. The terms and conditions of the sarine.com website (http://sarine.com/terms-and-conditions/) apply to the access and use of this software.
-###
 class SarineRoughDiamond extends Viewer
 	
 	constructor: (options) -> 			
@@ -27,8 +23,7 @@ class SarineRoughDiamond extends Viewer
 
 		@pluginDimention = if @atomConfig.ImageSize && @atomConfig.ImageSize.height then @atomConfig.ImageSize.height else 300
 
-		@domain = window.coreDomain # window.stones[0].viewersBaseUrl.replace('content/viewers/', '')
-		@path = "demo/r2p/" + window.stones[0].friendlyName + "/interactive"	
+		@domain = window.stones[0].viewers.roughViewer	
 
 	convertElement : () ->	
 		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"></div><ol class="threesixty_images"></ol></div></div>'
@@ -50,11 +45,11 @@ class SarineRoughDiamond extends Viewer
 	      if(resource.element == 'script')
 	        $(document.body).append(element)
 	        element.onload = element.onreadystatechange = ()-> triggerCallback(callback)
-	        element.src = @resourcesPrefix + resource.src + cacheVersion
+	        element.src = @resourcesPrefix + resource.src + "?" + cacheAssetsVersion
 	        element.type= "text/javascript"
 
 	      else
-	        element.href = @resourcesPrefix + resource.src + cacheVersion
+	        element.href = @resourcesPrefix + resource.src + "?" + cacheAssetsVersion
 	        element.rel= "stylesheet"
 	        element.type= "text/css"
 	        $(document.head).prepend(element) 
@@ -64,7 +59,7 @@ class SarineRoughDiamond extends Viewer
 		_t = @
 		@preloadAssets ()->
 			@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
-			src = _t.domain + _t.path + "/" + @firstImageName + cacheVersion
+			src = _t.domain + @firstImageName + cacheVersion
 			
 			_t.loadImage(src).then((img)->	
 				if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
@@ -88,7 +83,7 @@ class SarineRoughDiamond extends Viewer
 		if @isAvailble 
 			@slider360 = @element.find('.slider360')
 			
-			@imagePath = @domain + @path + "/"
+			@imagePath = @domain
 			
 			@filePrefix = @atomConfig.ImagePattern.replace(/\*.[^/.]+$/,'')
 			@fileExt = ".#{@atomConfig.ImagePattern.split('.').pop()}"
