@@ -45,11 +45,11 @@ class SarineRoughDiamond extends Viewer
 	      if(resource.element == 'script')
 	        $(document.body).append(element)
 	        element.onload = element.onreadystatechange = ()-> triggerCallback(callback)
-	        element.src = @resourcesPrefix + resource.src + cacheVersion
+	        element.src = @resourcesPrefix + resource.src + "?" + cacheAssetsVersion
 	        element.type= "text/javascript"
 
 	      else
-	        element.href = @resourcesPrefix + resource.src + cacheVersion
+	        element.href = @resourcesPrefix + resource.src + "?" + cacheAssetsVersion
 	        element.rel= "stylesheet"
 	        element.type= "text/css"
 	        $(document.head).prepend(element) 
