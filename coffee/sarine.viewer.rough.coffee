@@ -1,108 +1,67 @@
 class SarineRoughDiamond extends Viewer
-	
+
 	constructor: (options) -> 			
 		super(options)
 		@isAvailble = true
-		@resourcesPrefix = options.baseUrl + "atomic/v1/assets/"
+		@assetsPrefix = options.baseUrl + "atomic/v1/assets/"
 		@atomConfig = configuration.experiences.filter((exp)-> exp.atom == "roughDiamond")[0] 	
-		@resources = [
-	      {element:'script',src:'threesixty.min.js'},
-	      {element:'link',src:'threesixty.css'}
-	    ]
-
-		css = '.sarine-slider {width: ' + @atomConfig.ImageSize.width + 'px; height: ' + @atomConfig.ImageSize.height + 'px}'
-		css += '.spinner {margin-top: 40% !important}'
-		head = document.head || document.getElementsByTagName('head')[0]
-		style = document.createElement('style')
-		style.type = 'text/css'
-		if (style.styleSheet)
-			style.styleSheet.cssText = css
-		else
-			style.appendChild(document.createTextNode(css))		
-		head.appendChild(style)
-
-		@pluginDimention = if @atomConfig.ImageSize && @atomConfig.ImageSize.height then @atomConfig.ImageSize.height else 300
-
+		@assets = [
+			{element:'script',src: @assetsPrefix + 'sarine.plugin.imgplayer.min.js'},
+			{element:'link',src: @assetsPrefix + 'sarine.plugin.imgplayer.min.css'}
+		]
 		@domain = window.stones[0].viewers.roughViewer	
 
 	convertElement : () ->	
-		@element.append '<div class="threesixty slider360 sarine-slider"><div class="spinner"></div><ol class="threesixty_images"></ol></div></div>'
-
-	preloadAssets: (callback)=>
-
-	    loaded = 0
-	    totalScripts = @resources.map (elm)-> elm.element =='script'
-	    triggerCallback = (callback) ->
-	      loaded++
-	      if(loaded == totalScripts.length-1 && callback!=undefined )
-	        setTimeout( ()=> 
-	          callback() 
-	        ,500) 
-
-	    element
-	    for resource in @resources
-	      element = document.createElement(resource.element)
-	      if(resource.element == 'script')
-	        $(document.body).append(element)
-	        element.onload = element.onreadystatechange = ()-> triggerCallback(callback)
-	        element.src = @resourcesPrefix + resource.src + "?" + cacheAssetsVersion
-	        element.type= "text/javascript"
-
-	      else
-	        element.href = @resourcesPrefix + resource.src + "?" + cacheAssetsVersion
-	        element.rel= "stylesheet"
-	        element.type= "text/css"
-	        $(document.head).prepend(element) 
+		@element
 	        
 	first_init : ()->
 		defer = $.Deferred() 
 		_t = @
-		@preloadAssets ()->
-			@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
-			src = _t.domain + @firstImageName + cacheVersion
-			
-			_t.loadImage(src).then((img)->	
-				if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
-					defer.resolve(_t)
-				else
-					_t.isAvailble = false
-					_t.element.empty()
-					@canvas = $("<canvas>")		
-					@canvas[0].width = img.width
-					@canvas[0].height = img.height
-					@ctx = @canvas[0].getContext('2d')
-					@ctx.drawImage(img, 0, 0, img.width, img.height)
-					@canvas.attr {'class' : 'no_stone'}					
-					_t.element.append(@canvas)
-					defer.resolve(_t)										
-				) 
+		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
+		src = _t.domain + @firstImageName + cacheVersion
+		
+		_t.loadImage(src).then((img)->	
+			if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
+				defer.resolve(_t)
+			else
+				_t.isAvailble = false
+				_t.element.empty()
+				@canvas = $("<canvas>")		
+				@canvas[0].width = img.width
+				@canvas[0].height = img.height
+				@ctx = @canvas[0].getContext('2d')
+				@ctx.drawImage(img, 0, 0, img.width, img.height)
+				@canvas.attr {'class' : 'no_stone'}					
+				_t.element.append(@canvas)
+				defer.resolve(_t)										
+			) 
 		defer
 
 	full_init : ()-> 
 		defer = $.Deferred()
 		if @isAvailble 
-			@slider360 = @element.find('.slider360')
-			
-			@imagePath = @domain
-			
-			@filePrefix = @atomConfig.ImagePattern.replace(/\*.[^/.]+$/,'')
-			@fileExt = ".#{@atomConfig.ImagePattern.split('.').pop()}"
-			@slider360.ThreeSixty({
-				totalFrames: @atomConfig.NumberOfImages, # Total no. of image you have for 360 slider
-				endFrame: @atomConfig.NumberOfImages, # end frame for the auto spin animation
-				currentFrame: 1, # This the start frame for auto spin
-				imgList: '.threesixty_images', # selector for image list
-				progress: '.spinner', # selector to show the loading progress
-				imagePath: @imagePath, # path of the image assets
-				filePrefix: @filePrefix, # file prefix if any 
-				ext: @fileExt + cacheVersion, # extention for the assets
-				height: @pluginDimention, 
-				width: @pluginDimention,
-				navigation: false,
-				responsive: false,
-				onReady: () ->
-					defer.resolve(@)									
-			}); 
+			@roughDiamond = @element			
+			_t = @;
+			_t.loadAssets(@assets,() ->
+				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}')
+				_t.roughDiamond.imgplay({
+					startImage: 1,
+					totalImages: _t.atomConfig.NumberOfImages,
+					imageName: imageNameLocal,                            
+					urlDir:  _t.domain + imageNameLocal,
+					height: _t.atomConfig.width || 300,
+					width: _t.atomConfig.height || 300,
+					autoPlay: true,
+					rate: 10
+				})
+				_t.roughDiamond.on("play", (event, plugin) ->
+				)
+				_t.roughDiamond.on("pause", (event, plugin) ->
+				)
+				_t.roughDiamond.on("stop", (event, plugin) ->                          
+				)
+				defer.resolve(@)
+			)
 		defer	
 		
 	play : () -> return		
