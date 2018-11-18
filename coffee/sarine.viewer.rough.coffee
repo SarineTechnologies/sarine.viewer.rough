@@ -9,7 +9,9 @@ class SarineRoughDiamond extends Viewer
 			{element:'script',src: @assetsPrefix + 'sarine.plugin.imgplayer.min.js'},
 			{element:'link',src: @assetsPrefix + 'sarine.plugin.imgplayer.min.css'}
 		]
-		@domain = window.stones[0].viewers.roughViewer	
+		@domain = window.stones[0].viewers.roughViewer
+		@speed = @atomConfig && @atomConfig.speed || 10
+		@autoPlay = @atomConfig && @atomConfig.autoPlay
 
 	convertElement : () ->	
 		@element
@@ -17,7 +19,8 @@ class SarineRoughDiamond extends Viewer
 	first_init : ()->
 		defer = $.Deferred() 
 		_t = @
-		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1") 
+		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1")
+
 		src = _t.domain + @firstImageName + cacheVersion
 		
 		_t.loadImage(src).then((img)->	
@@ -51,8 +54,8 @@ class SarineRoughDiamond extends Viewer
 					urlDir:  _t.domain + imageNameLocal,
 					height: _t.atomConfig.width || 300,
 					width: _t.atomConfig.height || 300,
-					autoPlay: true,
-					rate: 10
+					autoPlay: _t.autoPlay ,
+					rate: _t.speed
 				})
 				_t.roughDiamond.on("play", (event, plugin) ->
 				)
