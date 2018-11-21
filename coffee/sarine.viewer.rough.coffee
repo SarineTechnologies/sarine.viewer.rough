@@ -4,7 +4,7 @@ class SarineRoughDiamond extends Viewer
 		super(options)
 		@isAvailble = true
 		@assetsPrefix = options.baseUrl + "atomic/v1/assets/"
-		@atomConfig = configuration.experiences.filter((exp)-> exp.atom == "roughDiamond")[0] 	
+		@atomConfig = configuration.experiences.filter((exp)-> exp.atom == "roughDiamond")[0]
 		@assets = [
 			{element:'script',src: @assetsPrefix + 'sarine.plugin.imgplayer.min.js'},
 			{element:'link',src: @assetsPrefix + 'sarine.plugin.imgplayer.min.css'}
@@ -63,6 +63,7 @@ class SarineRoughDiamond extends Viewer
 				)
 				_t.roughDiamond.on("stop", (event, plugin) ->                          
 				)
+				_t.roughDiamond[0].style.setProperty 'cursor','w-resize'
 				defer.resolve(@)
 			)
 		defer	
