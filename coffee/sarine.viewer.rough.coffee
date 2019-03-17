@@ -12,6 +12,7 @@ class SarineRoughDiamond extends Viewer
 		@domain = window.stones[0].viewers.roughViewer
 		@speed = @atomConfig && @atomConfig.speed || 10
 		@autoPlay = @atomConfig && @atomConfig.autoPlay
+		@atomConfig.ImagePattern = @atomConfig.ImagePattern.toLowerCase()
 
 	convertElement : () ->	
 		@element
