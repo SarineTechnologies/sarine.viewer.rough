@@ -13,6 +13,7 @@ class SarineRoughDiamond extends Viewer
 		@speed = @atomConfig && @atomConfig.speed || 10
 		@autoPlay = @atomConfig && @atomConfig.autoPlay
 		@atomConfig.ImagePattern = @atomConfig.ImagePattern.toLowerCase()
+		@chaceVersion = if window.stones[0].viewers.roughCacheVersion != null then '?' + window.stones[0].viewers.roughCacheVersion else ''
 
 	convertElement : () ->	
 		@element
@@ -22,7 +23,7 @@ class SarineRoughDiamond extends Viewer
 		_t = @
 		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1")
 
-		src = _t.domain + @firstImageName + cacheVersion
+		src = _t.domain + @firstImageName + @chaceVersion
 		
 		_t.loadImage(src).then((img)->	
 			if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
@@ -46,8 +47,9 @@ class SarineRoughDiamond extends Viewer
 		if @isAvailble 
 			@roughDiamond = @element			
 			_t = @;
+		
 			_t.loadAssets(@assets,() ->
-				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}')
+				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}') + _t.chaceVersion
 				_t.roughDiamond.imgplay({
 					startImage: 1,
 					totalImages: _t.atomConfig.NumberOfImages,
