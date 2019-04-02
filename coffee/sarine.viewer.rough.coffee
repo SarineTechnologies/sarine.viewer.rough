@@ -22,8 +22,10 @@ class SarineRoughDiamond extends Viewer
 		defer = $.Deferred() 
 		_t = @
 		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1")
-
-		src = _t.domain + @firstImageName + @chaceVersion
+		if(@chaceVersion!="")
+			src = _t.domain + @firstImageName + @chaceVersion
+		else
+			src = _t.domain + @firstImageName
 		
 		_t.loadImage(src).then((img)->	
 			if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
@@ -50,6 +52,8 @@ class SarineRoughDiamond extends Viewer
 		
 			_t.loadAssets(@assets,() ->
 				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}') + _t.chaceVersion
+				if( _t.chaceVersion!="")
+					imageNameLocal= imageNameLocal +_t.chaceVersion
 				_t.roughDiamond.imgplay({
 					startImage: 1,
 					totalImages: _t.atomConfig.NumberOfImages,
