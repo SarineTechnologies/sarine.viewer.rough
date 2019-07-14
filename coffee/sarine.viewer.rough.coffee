@@ -21,16 +21,46 @@ class SarineRoughDiamond extends Viewer
 	first_init : ()->
 		defer = $.Deferred() 
 		_t = @
+		
+
+		if(_t.atomConfig.ImagePattern.indexOf("webp")!=-1)
+			Device.isSupportsWebp().then (->
+			),   ->
+				_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace("webp","png")
+			.then ()->
+				_t.loadFirstImage(defer)
+		else
+			_t.loadFirstImage(defer)
+		defer
+	
+	loadFirstImage : (defer)->
+		_t = @
 		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1")
 		if(@chaceVersion!="")
 			src = _t.domain + @firstImageName + @chaceVersion
 		else
-			src = _t.domain + @firstImageName
-		
+			src = _t.domain + @firstImageName					
+					
 		_t.loadImage(src).then((img)->	
 			if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
 				defer.resolve(_t)
-			else
+			else  #fallback if there aren't webp images
+				if(_t.atomConfig.ImagePattern.indexOf("webp")!=-1)
+					_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace(".webp",".png")
+					src = src.replace(".webp",".png")
+					_t.loadImage(src).then((img)->	
+						if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
+							defer.resolve(_t)
+						else
+							_t.loadNoStone(defer)
+					)
+						
+				else
+					_t.loadNoStone(defer)
+									
+			)
+	
+	loadNoStone: (defer)->
 				_t.isAvailble = false
 				_t.element.empty()
 				@canvas = $("<canvas>")		
@@ -40,9 +70,7 @@ class SarineRoughDiamond extends Viewer
 				@ctx.drawImage(img, 0, 0, img.width, img.height)
 				@canvas.attr {'class' : 'no_stone'}					
 				_t.element.append(@canvas)
-				defer.resolve(_t)										
-			) 
-		defer
+				defer.resolve(_t)	
 
 	full_init : ()-> 
 		defer = $.Deferred()
