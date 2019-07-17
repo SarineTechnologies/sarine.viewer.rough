@@ -26,7 +26,7 @@ class SarineRoughDiamond extends Viewer
 		if(_t.atomConfig.ImagePattern.indexOf("webp")!=-1)
 			Device.isSupportsWebp().then (->
 			),   ->
-				_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace("webp","png")
+				_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace(".webp",_t.atomConfig.ImageFormatFallback)
 			.then ()->
 				_t.loadFirstImage(defer)
 		else
@@ -46,21 +46,22 @@ class SarineRoughDiamond extends Viewer
 				defer.resolve(_t)
 			else  #fallback if there aren't webp images
 				if(_t.atomConfig.ImagePattern.indexOf("webp")!=-1)
-					_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace(".webp",".png")
-					src = src.replace(".webp",".png")
+					_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace(".webp",_t.atomConfig.ImageFormatFallback)
+					src = src.replace(".webp",_t.atomConfig.ImageFormatFallback)
 					_t.loadImage(src).then((img)->	
 						if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
 							defer.resolve(_t)
 						else
-							_t.loadNoStone(defer)
+							_t.loadNoStone(defer,img)
 					)
 						
 				else
-					_t.loadNoStone(defer)
+					_t.loadNoStone(defer,img)
 									
 			)
 	
-	loadNoStone: (defer)->
+	loadNoStone: (defer,img)->
+				_t = @
 				_t.isAvailble = false
 				_t.element.empty()
 				@canvas = $("<canvas>")		
