@@ -80,9 +80,9 @@ class SarineRoughDiamond extends Viewer
 			_t = @;
 		
 			_t.loadAssets(@assets,() ->
-				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}') + _t.chaceVersion
+				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}') 
 				if( _t.chaceVersion!="")
-					imageNameLocal= imageNameLocal +_t.chaceVersion
+					imageNameLocal= imageNameLocal + _t.chaceVersion
 				_t.roughDiamond.imgplay({
 					startImage: 1,
 					totalImages: _t.atomConfig.NumberOfImages,
