@@ -25,7 +25,7 @@ class SarineRoughDiamond extends Viewer
 
 		if(_t.atomConfig.ImagePattern.indexOf("webp")!=-1)
 			Device.isSupportsWebp().then (->
-			),   ->
+			),   ->  #if browser not support webp images
 				_t.atomConfig.ImagePattern = _t.atomConfig.ImagePattern.replace(".webp",_t.atomConfig.ImageFormatFallback)
 			.then ()->
 				_t.loadFirstImage(defer)
@@ -36,10 +36,7 @@ class SarineRoughDiamond extends Viewer
 	loadFirstImage : (defer)->
 		_t = @
 		@firstImageName = _t.atomConfig.ImagePattern.replace("*","1")
-		if(@chaceVersion!="")
-			src = _t.domain + @firstImageName + @chaceVersion
-		else
-			src = _t.domain + @firstImageName					
+		src = _t.domain + @firstImageName + @chaceVersion			
 					
 		_t.loadImage(src).then((img)->	
 			if img.src.indexOf('data:image') == -1 && img.src.indexOf('no_stone') == -1			
@@ -78,11 +75,9 @@ class SarineRoughDiamond extends Viewer
 		if @isAvailble 
 			@roughDiamond = @element			
 			_t = @;
-		
+			#load all images
 			_t.loadAssets(@assets,() ->
-				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}') 
-				if( _t.chaceVersion!="")
-					imageNameLocal= imageNameLocal + _t.chaceVersion
+				imageNameLocal = _t.atomConfig.ImagePattern.replace('*', '{num}') + _t.chaceVersion
 				_t.roughDiamond.imgplay({
 					startImage: 1,
 					totalImages: _t.atomConfig.NumberOfImages,
