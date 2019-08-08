@@ -22,6 +22,11 @@ class SarineRoughDiamond extends Viewer
 		defer = $.Deferred() 
 		_t = @
 		
+		_t.$curElement = $('.viewer.roughDiamond') 
+		#decide on image size
+		_t.containerSize = _t.$curElement.width()
+		if (_t.containerSize == 0)
+			_t.containerSize = Math.min($(window).height(), $(window).width())
 
 		if(_t.atomConfig.ImagePattern.indexOf("webp")!=-1)
 			Device.isSupportsWebp().then (->
@@ -83,8 +88,8 @@ class SarineRoughDiamond extends Viewer
 					totalImages: _t.atomConfig.NumberOfImages,
 					imageName: imageNameLocal,                            
 					urlDir:  _t.domain + imageNameLocal,
-					height: _t.atomConfig.width || 300,
-					width: _t.atomConfig.height || 300,
+					height:  _t.containerSize,
+					width:  _t.containerSize,
 					autoPlay: _t.autoPlay ,
 					rate: _t.speed
 				})
